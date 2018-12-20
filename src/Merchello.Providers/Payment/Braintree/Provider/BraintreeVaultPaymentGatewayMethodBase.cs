@@ -55,8 +55,9 @@
             var authorizeAmount = invoice.Total;
             if (args.ContainsKey("authorizePaymentAmount")) authorizeAmount = Convert.ToDecimal(args["authorizePaymentAmount"]);
 
-            var merchantAccountId = string.Empty;
-            if (args.ContainsKey("merchantAccountId")) merchantAccountId = args["merchantAccountId"];
+            var merchantAccountId = args.ContainsKey("merchantAccountId")
+                ? args["merchantAccountId"]
+                : this.BraintreeApiService.BraintreeProviderSettings.GetMerchantAccountIdForCurrency(invoice.CurrencyCode);
 
             // The Provider settings 
             if (this.BraintreeApiService.BraintreeProviderSettings.DefaultTransactionOption == TransactionOption.SubmitForSettlement)
@@ -117,8 +118,9 @@
                 return new PaymentResult(Attempt<IPayment>.Fail(error), invoice, false);
             }
 
-            var merchantAccountId = string.Empty;
-            if (args.ContainsKey("merchantAccountId")) merchantAccountId = args["merchantAccountId"];
+            var merchantAccountId = args.ContainsKey("merchantAccountId")
+                ? args["merchantAccountId"]
+                : this.BraintreeApiService.BraintreeProviderSettings.GetMerchantAccountIdForCurrency(invoice.CurrencyCode);
 
             var attempt = this.ProcessPayment(invoice, TransactionOption.SubmitForSettlement, amount, paymentMethodToken, "", merchantAccountId);
 

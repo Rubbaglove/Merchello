@@ -53,8 +53,9 @@
             var authorizeAmount = invoice.Total;
             if (args.ContainsKey("authorizePaymentAmount")) authorizeAmount = Convert.ToDecimal(args["authorizePaymentAmount"]);
 
-            var merchantAccountId = string.Empty;
-            if (args.ContainsKey("merchantAccountId")) merchantAccountId = args["merchantAccountId"];
+            var merchantAccountId = args.ContainsKey("merchantAccountId")
+                ? args["merchantAccountId"]
+                : this.BraintreeApiService.BraintreeProviderSettings.GetMerchantAccountIdForCurrency(invoice.CurrencyCode);
 
             var paymentMethodNonce = args.GetPaymentMethodNonce();
 
@@ -116,8 +117,9 @@
             var email = string.Empty;
             if (args.ContainsKey("customerEmail")) email = args["customerEmail"];
 
-            var merchantAccountId = string.Empty;
-            if (args.ContainsKey("merchantAccountId")) merchantAccountId = args["merchantAccountId"];
+            var merchantAccountId = args.ContainsKey("merchantAccountId")
+                ? args["merchantAccountId"]
+                : this.BraintreeApiService.BraintreeProviderSettings.GetMerchantAccountIdForCurrency(invoice.CurrencyCode);
 
             var attempt = this.ProcessPayment(invoice, TransactionOption.SubmitForSettlement, amount, paymentMethodNonce, email, merchantAccountId);
 

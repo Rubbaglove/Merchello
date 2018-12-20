@@ -1,4 +1,6 @@
-﻿namespace Merchello.Providers.Payment.Braintree.Models
+﻿using System;
+
+namespace Merchello.Providers.Payment.Braintree.Models
 {
     using Merchello.Providers.Models;
     using Merchello.Providers.Payment.Braintree;
@@ -44,6 +46,11 @@
         public string MerchantId { get; set; }
 
         /// <summary>
+        /// Gets or sets the merchant account ids (if any, put each currency on a new line with currency_code:merchant_account_id).
+        /// </summary>
+        public string MerchantAccountIds { get; set; }
+
+        /// <summary>
         /// Gets or sets the merchant descriptor.
         /// </summary>
         public MerchantDescriptor MerchantDescriptor { get; set; }
@@ -52,6 +59,25 @@
         /// Gets or sets the default transaction option.
         /// </summary>
         [JsonConverter(typeof(StringEnumConverter))]
-        public TransactionOption DefaultTransactionOption { get; set; }        
+        public TransactionOption DefaultTransactionOption { get; set; }
+
+        public string GetMerchantAccountIdForCurrency(string isoCurrencyCode)
+        {
+            if (string.IsNullOrWhiteSpace(isoCurrencyCode) || string.IsNullOrWhiteSpace(MerchantAccountIds)) return string.Empty;
+
+            var currencyLines = MerchantAccountIds.Split(Environment.NewLine.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            foreach (var currencyLine in currencyLines)
+            {
+                if (string.IsNullOrWhiteSpace(currencyLine) || !currencyLine.Contains(":")) continue;
+
+                var currencyData = currencyLine.Split(':');
+                if (currencyData[0].ToUpper() == isoCurrencyCode.ToUpper())
+                {
+                    return currencyData[1];
+                }
+            }
+
+            return string.Empty;
+        }
     }
 }

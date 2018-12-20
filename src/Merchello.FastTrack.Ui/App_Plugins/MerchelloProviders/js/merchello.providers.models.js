@@ -27,6 +27,7 @@ var BraintreeProviderSettings = function() {
     self.publicKey = '';
     self.privateKey = '';
     self.merchantId = '';
+    self.merchantAccountIds = '';
     self.merchantDescriptor = {};
     self.defaultTransactionOption = '';
 };
