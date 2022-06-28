@@ -43,6 +43,13 @@
                 request.Customer = new CustomerRequest() { Email = email };
             }
 
+            var getNonce = this.BraintreeGateway.PaymentMethodNonce.Find(paymentMethodNonce);
+            if (getNonce.ThreeDSecureInfo == null)
+            {
+                // don't want to process a payment that didn't have any 3D info returned
+                return null;
+            }
+
             LogHelper.Info<BraintreeTransactionApiService>(string.Format("Braintree Transaction attempt ({0}) for Invoice {1}", option.ToString(), invoice.PrefixedInvoiceNumber()));
             var attempt = this.TryGetApiResult(() => this.BraintreeGateway.Transaction.Sale(request));
 

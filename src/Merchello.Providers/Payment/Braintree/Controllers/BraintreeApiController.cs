@@ -78,6 +78,8 @@
         [HttpGet]
         public string GetClientRequestToken(Guid customerKey)
         {
+            LogHelper.Info<BraintreeApiController>("Braintree: GetClientRequestToken");
+
             if (customerKey == Guid.Empty)
             {
                 return this._braintreeApiService.Customer.GenerateClientRequestToken();
